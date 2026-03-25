@@ -22,7 +22,8 @@ namespace CourierBackend.Data
             // 4. Makes it easier to manage transactions and ensure data consistency
             // 5. Reusing a DbContext instance can lead to increased memory usage
 
-            builder.Services.AddSqlite<CourierContext>(connectionString);
+            //builder.Services.AddSqlite<CourierContext>(connectionString);
+            builder.Services.AddDbContext<CourierContext>(options => options.UseSqlite(connectionString));
         }
     }
 }

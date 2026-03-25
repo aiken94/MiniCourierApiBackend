@@ -4,6 +4,7 @@ namespace CourierBackend.Controllers
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using CourierBackend.Data;
     using CourierBackend.Models;
     using Microsoft.AspNetCore.Mvc;
 
