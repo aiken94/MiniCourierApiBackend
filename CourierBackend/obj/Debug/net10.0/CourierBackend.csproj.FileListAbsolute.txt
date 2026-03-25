@@ -1,0 +1,8 @@
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.csproj.AssemblyReference.cache
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.AssemblyInfoInputs.cache
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.AssemblyInfo.cs
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.csproj.CoreCompileInputs.cache
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\navte\OneDrive\Documents\C# Projects\Courier\Backend\CourierBackend\obj\Debug\net10.0\CourierBackend.MvcApplicationPartsAssemblyInfo.cache
