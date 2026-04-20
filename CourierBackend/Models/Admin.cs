@@ -1,7 +1,10 @@
 namespace CourierBackend.Models
 {
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using Microsoft.EntityFrameworkCore;
 
+    [Index(nameof(Email), IsUnique = true)]
     public class Admin
     {
         [Key]
@@ -13,6 +16,7 @@ namespace CourierBackend.Models
             User
         }
 
+        [DefaultValue(RoleType.User)]
         public RoleType Role { get; set; }
 
         public required string Name { get; set; }
@@ -26,5 +30,7 @@ namespace CourierBackend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Package> Packages { get; set; } = new List<Package>();
     }
 }

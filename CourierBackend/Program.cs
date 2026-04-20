@@ -1,5 +1,8 @@
 using CourierBackend.Data;
+using FluentValidation;
 using Microsoft.OpenApi;
+using CourierBackend.Data.Validators.Admin;
+using CourierBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,19 @@ builder.DBStoreConnection();
 
 // validation service
 builder.Services.AddValidation();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateValidator>();
+
+// query service
+builder.Services.AddScoped<IQueryService, QueryService>();
+
+// pagination service
+builder.Services.AddScoped<IPaginationService, PaginationService>();
+
+// cache service
+builder.Services.AddMemoryCache();
+
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 

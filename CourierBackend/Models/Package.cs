@@ -30,5 +30,7 @@ namespace CourierBackend.Models
 
         [ForeignKey("AdminId")]
         public Admin? Admin { get; set; }
+
+        public List<PackageDeliveryHistory>? Histories { get; set; }
     }
 }
