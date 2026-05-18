@@ -12,8 +12,8 @@ namespace CourierBackend.Models
 
         public enum RoleType
         {
-            Admin,
-            User
+            Admin = 0,
+            User = 1
         }
 
         [DefaultValue(RoleType.User)]

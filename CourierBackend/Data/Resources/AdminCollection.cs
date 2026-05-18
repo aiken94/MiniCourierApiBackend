@@ -1,4 +1,4 @@
-namespace CourierBackend.Data.Resource
+namespace CourierBackend.Data.Resources
 {
     using CourierBackend.Models;
 

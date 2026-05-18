@@ -1,12 +1,15 @@
 namespace CourierBackend.Data.Validators.Admin
 {
     using FluentValidation;
-    using CourierBackend.Models;
+    using CourierBackend.Data.Requests;
 
-    public class CreateValidator : AbstractValidator<Admin>
+    public class CreateValidator : AbstractValidator<AdminRequest>
     {
         public CreateValidator()
         {
+            RuleFor(admin => admin.Role)
+                .IsInEnum().WithMessage("Invalid role type.");
+
             RuleFor(admin => admin.Name)
                 .NotEmpty().WithMessage("Name is required.")
                 .MinimumLength(2).WithMessage("Name must be at least 2 characters long.")
@@ -21,7 +24,7 @@ namespace CourierBackend.Data.Validators.Admin
                 .NotEmpty().WithMessage("Phone number is required.")
                 .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("Invalid phone number format.");
 
-            RuleFor(admin => admin.PasswordHash)
+            RuleFor(admin => admin.Password)
             .NotEmpty()
             .MinimumLength(8)
             .Matches("[A-Z]").WithMessage("Must contain uppercase")

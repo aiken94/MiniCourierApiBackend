@@ -1,15 +1,17 @@
 namespace CourierBackend.Controllers
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using CourierBackend.Data;
     using CourierBackend.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using CourierBackend.Data.Resource;
+    using CourierBackend.Data.Resources;
     using CourierBackend.Services;
+    using CourierBackend.Data.Requests;
+    using FluentValidation;
+    using CourierBackend.Helpers;
+    using CourierBackend.Services.Model.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -17,16 +19,23 @@ namespace CourierBackend.Controllers
     {
         private readonly CourierContext _context;
         //private readonly IPaginationService _paginationService;
+
         private readonly IQueryService _queryService;
 
-        private readonly PasswordHasher<Admin> _passwordHasher;
+        private readonly IValidator<AdminRequest> _validator;
 
-        public AdminController(CourierContext context, IQueryService queryService)
+        private readonly PasswordHasher<AdminRequest> _passwordHasher;
+
+        private readonly IAdminService _adminService;
+
+        public AdminController(CourierContext context, IQueryService queryService, IValidator<AdminRequest> validator, IAdminService adminService)
         {
             _context = context;
-            _passwordHasher = new PasswordHasher<Admin>();
+            _passwordHasher = new PasswordHasher<AdminRequest>();
             //_paginationService = paginationService;
             _queryService = queryService;
+            _validator = validator;
+            _adminService = adminService;
         }
 
         // GET: api/Admin
@@ -76,7 +85,7 @@ namespace CourierBackend.Controllers
 
         // GET: api/Admin/5
         [HttpGet("{id}")]
-        public ActionResult<Admin> GetAdmin(int id)
+        public ActionResult<AdminResource> GetAdmin(int id)
         {
             var admin = _context.Admins.Find(id);
 
@@ -85,37 +94,25 @@ namespace CourierBackend.Controllers
                 return NotFound();
             }
 
-            return admin;
+            return AdminResource.FromModel(admin);
         }
 
         // POST: api/Admin
         [HttpPost]
-        public ActionResult<Admin> PostAdmin(Admin request)
+        public async Task<IActionResult> PostAdmin(AdminRequest request)
         {
+            var result = await _validator.ValidateAsync(request);
 
-            if (request == null)
+            if (!result.IsValid)
             {
-                return BadRequest(new { message = "Invalid request" });
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
             }
 
-            // Hash password
-            request.PasswordHash = _passwordHasher.HashPassword(request, request.PasswordHash);
+            Admin admin = await _adminService.RegisterAsync(request);
 
-            _context.Admins.Add(request);
-            _context.SaveChanges();
+            AdminResource resource = AdminResource.FromModel(admin);
 
-            return CreatedAtAction(nameof(GetAdmin), new { id = request.Id }, new
-            {
-                message = "Admin created successfully",
-                data = new
-                {
-                    request.Id,
-                    request.Name,
-                    request.Email,
-                    request.PhoneNumber,
-                    request.Role
-                }
-            });
+            return CreatedAtAction(nameof(GetAdmin), new { id = resource.Id }, ResponseStructures.SuccessResponse(resource));
         }
     }
 }
