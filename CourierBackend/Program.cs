@@ -28,8 +28,10 @@ builder.Services.AddScoped<IQueryService, QueryService>();
 builder.Services.AddScoped<IPaginationService, PaginationService>();
 
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-
 builder.Services.AddScoped<IAdminService, AdminService>();
+
+builder.Services.AddScoped<IPackageRepository, PackageRepository>();
+builder.Services.AddScoped<IPackageService, PackageService>();
 
 // cache service
 builder.Services.AddMemoryCache();
@@ -55,9 +57,14 @@ builder.Services.AddRouting(options =>
     options.LowercaseQueryStrings = true;
 });
 
+// file service
+builder.Services.AddScoped<IFileService, FileService>();
+
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {

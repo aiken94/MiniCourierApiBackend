@@ -21,10 +21,41 @@ namespace CourierBackend.Data.Repositories
                 .AnyAsync(x => x.Email == email);
         }
 
+        public async Task<bool> EmailUpdateExistsAsync(string email, int id)
+        {
+            // return await _context.Admins
+            //     .Where(x => x.Email == email)
+            //     .Where(x => x.Id != id)
+            //     .AnyAsync();
+
+            return await _context.Admins
+                    .AnyAsync(x =>
+                        x.Email == email &&
+                        x.Id != id);
+        }
+
+        public async Task<Admin?> GetByIdAsync(int id)
+        {
+            return await _context.Admins
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task CreateAsync(Admin admin)
         {
             await _context.Admins.AddAsync(admin);
 
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Admin admin)
+        {
+            _context.Admins.Update(admin);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Admin admin)
+        {
+            _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();
         }
     }

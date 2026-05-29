@@ -10,14 +10,8 @@ namespace CourierBackend.Models
         [Key]
         public int Id { get; set; }
 
-        public enum RoleType
-        {
-            Admin = 0,
-            User = 1
-        }
-
-        [DefaultValue(RoleType.User)]
-        public RoleType Role { get; set; }
+        [DefaultValue(1)]
+        public int Role { get; set; }
 
         public required string Name { get; set; }
 
@@ -29,6 +23,7 @@ namespace CourierBackend.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        [DefaultValue(typeof(DateTime), "UtcNow")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Package> Packages { get; set; } = new List<Package>();

@@ -14,13 +14,13 @@ namespace CourierBackend.Models
 
         public required decimal Cost { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public required string ImageUrl { get; set; }
 
-        public string? Description { get; set; }
+        public required string Description { get; set; }
 
         public required string TrackingNumber { get; set; }
 
-        public DateTime DeliveryDate { get; set; }
+        public DateOnly DeliveryDate { get; set; }
 
         public int NoOfTracking { get; set; } = 0;
 
@@ -29,7 +29,11 @@ namespace CourierBackend.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("AdminId")]
-        public Admin? Admin { get; set; }
+        public Admin Admin { get; set; }
+
+        public Receiver Receiver { get; set; }
+
+        public Sender Sender { get; set; }
 
         public List<PackageDeliveryHistory>? Histories { get; set; }
     }

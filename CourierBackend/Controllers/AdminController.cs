@@ -4,7 +4,6 @@ namespace CourierBackend.Controllers
     using System.Threading.Tasks;
     using CourierBackend.Data;
     using CourierBackend.Models;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using CourierBackend.Data.Resources;
     using CourierBackend.Services;
@@ -24,15 +23,11 @@ namespace CourierBackend.Controllers
 
         private readonly IValidator<AdminRequest> _validator;
 
-        private readonly PasswordHasher<AdminRequest> _passwordHasher;
-
         private readonly IAdminService _adminService;
 
         public AdminController(CourierContext context, IQueryService queryService, IValidator<AdminRequest> validator, IAdminService adminService)
         {
             _context = context;
-            _passwordHasher = new PasswordHasher<AdminRequest>();
-            //_paginationService = paginationService;
             _queryService = queryService;
             _validator = validator;
             _adminService = adminService;
@@ -58,6 +53,11 @@ namespace CourierBackend.Controllers
         {
             var query = _context.Admins.AsQueryable();
 
+            Dictionary<string, int> roles = new Dictionary<string, int>();
+
+            roles["admin"] = 0;
+            roles["user"] = 1;
+
             var result = await _queryService.QueryAsync(
                 query,
                 parameters,
@@ -68,16 +68,18 @@ namespace CourierBackend.Controllers
                     a.Name.ToLower().Contains(search.ToLower()) ||
                     a.Email.ToLower().Contains(search.ToLower()) ||
                     a.PhoneNumber.ToLower().Contains(search.ToLower())
-                )//,
+                ),
 
                 // FILTER LOGIC
-                //(q, filters) =>
-                //{
-                //    if (filters.ContainsKey("role"))
-                //        q = q.Where(a => a.RoleType == filters["role"]);
+                (q, filters) =>
+                {
+                    var role = roles[filters["role"]];
 
-                //    return q;
-                //}
+                    if (filters.ContainsKey("role"))
+                        q = q.Where(a => a.Role == role);
+
+                    return q;
+                }
             );
 
             return Ok(result);
@@ -85,14 +87,9 @@ namespace CourierBackend.Controllers
 
         // GET: api/Admin/5
         [HttpGet("{id}")]
-        public ActionResult<AdminResource> GetAdmin(int id)
+        public async Task<ActionResult<AdminResource>> GetAdmin(int id)
         {
-            var admin = _context.Admins.Find(id);
-
-            if (admin == null)
-            {
-                return NotFound();
-            }
+            var admin = await _adminService.GetByIdAsync(id);
 
             return AdminResource.FromModel(admin);
         }
@@ -113,6 +110,23 @@ namespace CourierBackend.Controllers
             AdminResource resource = AdminResource.FromModel(admin);
 
             return CreatedAtAction(nameof(GetAdmin), new { id = resource.Id }, ResponseStructures.SuccessResponse(resource));
+        }
+
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> PutAdmin(AdminRequest request, int id)
+        {
+            var result = await _validator.ValidateAsync(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
+            Admin admin = await _adminService.UpdatedAsync(request, id);
+
+            AdminResource resource = AdminResource.FromModel(admin);
+
+            return Ok(ResponseStructures.SuccessResponse(resource));
         }
     }
 }

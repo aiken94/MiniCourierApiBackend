@@ -10,13 +10,6 @@ namespace CourierBackend.Data
 
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Package>()
-                .HasOne(p => p.Admin)
-                .WithMany(a => a.Packages);
-        }
-
         public DbSet<Admin> Admins { get; set; }
 
         public DbSet<PackageDeliveryHistory> PackageDeliveryHistories { get; set; }
@@ -26,5 +19,43 @@ namespace CourierBackend.Data
         public DbSet<Receiver> Receivers { get; set; }
 
         public DbSet<Sender> Senders { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // apply all configurations from the assembly
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CourierContext).Assembly);
+
+            // modelBuilder.Entity<Admin>()
+            //     .HasMany(a => a.Packages)
+            //     .WithOne(p => p.Admin)
+            //     .HasForeignKey(p => p.AdminId)
+            //     .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Package>()
+                .HasOne(p => p.Admin)
+                .WithMany(a => a.Packages)
+                .HasForeignKey(p => p.AdminId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Package>()
+                .HasOne(p => p.Sender)
+                .WithOne(s => s.Package)
+                .HasForeignKey<Sender>(s => s.PackageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Package>()
+                .HasOne(p => p.Receiver)
+                .WithOne(r => r.Package)
+                .HasForeignKey<Receiver>(r => r.PackageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PackageDeliveryHistory>()
+                .HasOne(p => p.Package)
+                .WithMany(p => p.Histories)
+                .HasForeignKey(p => p.PackageId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

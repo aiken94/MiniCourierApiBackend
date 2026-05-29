@@ -5,6 +5,7 @@ namespace CourierBackend.Data.Resources
     public class AdminResource
     {
         public int Id { get; set; }
+        public string? Role { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
@@ -13,9 +14,12 @@ namespace CourierBackend.Data.Resources
 
         public static AdminResource FromModel(Admin admin)
         {
+            string[] roleType = ["Admin", "User"];
+
             return new AdminResource
             {
                 Id = admin.Id,
+                Role = roleType[admin.Role],
                 Name = admin.Name,
                 Email = admin.Email,
                 PhoneNumber = admin.PhoneNumber,
