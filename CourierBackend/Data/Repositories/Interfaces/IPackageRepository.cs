@@ -14,5 +14,7 @@ namespace CourierBackend.Data.Repositories.Interfaces
         Task<Package> UpdateAsync(PackageRequest request, Package package);
 
         Task DeleteAsync(Package package);
+
+        Task<Package?> GetByTrackingNumberAsync(string trackingNumber);
     }
 }

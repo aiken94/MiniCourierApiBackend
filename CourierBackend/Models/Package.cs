@@ -29,12 +29,12 @@ namespace CourierBackend.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("AdminId")]
-        public Admin Admin { get; set; }
+        public Admin? Admin { get; set; }
 
-        public Receiver Receiver { get; set; }
+        public Receiver? Receiver { get; set; }
 
-        public Sender Sender { get; set; }
+        public Sender? Sender { get; set; }
 
-        public List<PackageDeliveryHistory>? Histories { get; set; }
+        public ICollection<PackageDeliveryHistory>? Histories { get; set; }
     }
 }

@@ -17,11 +17,14 @@ namespace CourierBackend.Controllers
     {
         private readonly IValidator<PackageRequest> _validator;
 
+        private readonly IValidator<TrackPackageRequest> _trackValidator;
+
         private readonly IPackageService _packageService;
 
-        public PackageController(IValidator<PackageRequest> validator, IPackageService packageService)
+        public PackageController(IValidator<PackageRequest> packageValidator, IValidator<TrackPackageRequest> trackValidator, IPackageService packageService)
         {
-            _validator = validator;
+            _validator = packageValidator;
+            _trackValidator = trackValidator;
             _packageService = packageService;
         }
 
@@ -91,7 +94,7 @@ namespace CourierBackend.Controllers
                 );
             }
 
-            await _packageService.UpdateAsync(request, id);
+            await _packageService.UpdateAsync(request, package);
 
             PackageResource resource = PackageResource.FromModel(package);
 
@@ -113,6 +116,30 @@ namespace CourierBackend.Controllers
             await _packageService.DeleteAsync(package);
 
             return NoContent();
+        }
+
+        [HttpPost("track")]
+        public async Task<IActionResult> TrackPackage([FromBody] TrackPackageRequest request)
+        {
+            var result = await _trackValidator.ValidateAsync(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
+            var package = await _packageService.GetByTrackingNumberAsync(request.TrackingNumber);
+
+            if (package is null)
+            {
+                return NotFound(
+                    ResponseStructures._404Response("Package not found")
+                );
+            }
+
+            TrackingResource resource = TrackingResource.FromModel(package);
+
+            return Ok(ResponseStructures.SuccessResponse(resource));
         }
     }
 }

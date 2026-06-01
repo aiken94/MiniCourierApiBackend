@@ -204,5 +204,23 @@ namespace CourierBackend.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Package?> GetByTrackingNumberAsync(string trackingNumber)
+        {
+            var package = await _context.Packages
+                .Include(x => x.Sender)
+                .Include(x => x.Receiver)
+                .Include(x => x.Histories)
+                .FirstOrDefaultAsync(x => x.TrackingNumber == trackingNumber);
+
+            // since this is package tracking request, we need to update the number of tracking column by increasing by 1
+            if (package != null)
+            {
+                package.NoOfTracking++;
+                await _context.SaveChangesAsync();
+            }
+
+            return package;
+        }
     }
 }

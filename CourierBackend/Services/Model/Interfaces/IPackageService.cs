@@ -8,11 +8,13 @@ public interface IPackageService
 {
     Task<Pagination<PackageResource>> GetPackagesAsync(QueryParameters parameters);
 
-    Task<Package> GetByIdAsync(int id);
+    Task<Package?> GetByIdAsync(int id);
 
-    Task<Package> CreateAsync(PackageRequest request);
+    Task<Package?> CreateAsync(PackageRequest request);
 
-    Task<Package> UpdateAsync(PackageRequest request, int id);
+    Task<Package?> UpdateAsync(PackageRequest request, Package package);
 
     Task DeleteAsync(Package package);
+
+    Task<Package?> GetByTrackingNumberAsync(string trackingNumber);
 }

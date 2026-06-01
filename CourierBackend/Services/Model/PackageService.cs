@@ -35,23 +35,20 @@ public class PackageService : IPackageService
         );
     }
 
-    public async Task<Package> GetByIdAsync(int id)
+    public async Task<Package?> GetByIdAsync(int id)
     {
         return await _packageRepository.GetByIdAsync(id);
     }
 
-    public async Task<Package> CreateAsync(PackageRequest request)
+    public async Task<Package?> CreateAsync(PackageRequest request)
     {
         Package package = await _packageRepository.CreateAsync(request);
 
         return package;
     }
 
-    public async Task<Package> UpdateAsync(PackageRequest request, int id)
+    public async Task<Package?> UpdateAsync(PackageRequest request, Package package)
     {
-        // check if package exists
-        Package package = await GetByIdAsync(id);
-
         // if it exists, update it
         return await _packageRepository.UpdateAsync(request, package);
     }
@@ -59,5 +56,10 @@ public class PackageService : IPackageService
     public async Task DeleteAsync(Package package)
     {
         await _packageRepository.DeleteAsync(package);
+    }
+
+    public async Task<Package?> GetByTrackingNumberAsync(string trackingNumber)
+    {
+        return await _packageRepository.GetByTrackingNumberAsync(trackingNumber);
     }
 }
