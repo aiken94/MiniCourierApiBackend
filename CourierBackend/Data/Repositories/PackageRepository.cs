@@ -130,7 +130,8 @@ namespace CourierBackend.Data.Repositories
                 // optional: update image only if provided
                 if (request.PackageImage != null)
                 {
-                    package.ImageUrl = await _fileService.SavePackageImageAsync(request.PackageImage);
+                    // update image and delete old one
+                    package.ImageUrl = await _fileService.UpdatePackageImageAsync(request.PackageImage, package.ImageUrl);
                 }
 
                 // 2. Update Sender (1:1)
@@ -193,6 +194,12 @@ namespace CourierBackend.Data.Repositories
 
         public async Task DeleteAsync(Package package)
         {
+            // delete image file
+            if (!string.IsNullOrEmpty(package.ImageUrl))
+            {
+                await _fileService.DeleteFileAsync(package.ImageUrl);
+            }
+
             _context.Packages.Remove(package);
 
             await _context.SaveChangesAsync();

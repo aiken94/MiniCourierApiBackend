@@ -5,6 +5,10 @@ namespace CourierBackend.Services
     public interface IFileService
     {
         Task<string> SavePackageImageAsync(IFormFile file);
+
+        Task<string> UpdatePackageImageAsync(IFormFile file, string existingFilePath);
+
+        Task<bool> DeleteFileAsync(string filePath);
     }
 
     public class FileService : IFileService
@@ -45,6 +49,40 @@ namespace CourierBackend.Services
             await file.CopyToAsync(stream);
 
             return $"/uploads/packages/{fileName}";
+        }
+
+        public async Task<string> UpdatePackageImageAsync(IFormFile file, string existingFilePath)
+        {
+            if (!FileValidation.IsValidImage(file, out _))
+            {
+                return null;
+            }
+
+            // Delete existing file if it exists
+            if (!string.IsNullOrEmpty(existingFilePath))
+            {
+                await DeleteFileAsync(existingFilePath);
+            }
+
+            // Save new file
+            return await SavePackageImageAsync(file);
+        }
+
+        public async Task<bool> DeleteFileAsync(string filePath)
+        {
+            var fullPath = Path.Combine(
+                _environment.WebRootPath ?? Path.Combine(_environment.ContentRootPath, "wwwroot"),
+                filePath.TrimStart('/')
+            );
+
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
