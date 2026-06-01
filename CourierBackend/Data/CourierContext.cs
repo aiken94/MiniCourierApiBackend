@@ -20,6 +20,10 @@ namespace CourierBackend.Data
 
         public DbSet<Sender> Senders { get; set; }
 
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
+        public DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -27,11 +31,9 @@ namespace CourierBackend.Data
             // apply all configurations from the assembly
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CourierContext).Assembly);
 
-            // modelBuilder.Entity<Admin>()
-            //     .HasMany(a => a.Packages)
-            //     .WithOne(p => p.Admin)
-            //     .HasForeignKey(p => p.AdminId)
-            //     .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PersonalAccessToken>()
+            .HasIndex(r => r.Token)
+            .IsUnique();
 
             modelBuilder.Entity<Package>()
                 .HasOne(p => p.Admin)
@@ -56,6 +58,9 @@ namespace CourierBackend.Data
                 .WithMany(p => p.Histories)
                 .HasForeignKey(p => p.PackageId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(x => x.TokenHash);
         }
     }
 }

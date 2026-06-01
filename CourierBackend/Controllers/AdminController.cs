@@ -11,6 +11,7 @@ namespace CourierBackend.Controllers
     using FluentValidation;
     using CourierBackend.Helpers;
     using CourierBackend.Services.Model.Interfaces;
+    using CourierBackend.Services.Auth.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -25,12 +26,15 @@ namespace CourierBackend.Controllers
 
         private readonly IAdminService _adminService;
 
-        public AdminController(CourierContext context, IQueryService queryService, IValidator<AdminRequest> validator, IAdminService adminService)
+        private readonly ICurrentAdminService _currentUser;
+
+        public AdminController(CourierContext context, IQueryService queryService, IValidator<AdminRequest> validator, IAdminService adminService, ICurrentAdminService currentUser)
         {
             _context = context;
             _queryService = queryService;
             _validator = validator;
             _adminService = adminService;
+            _currentUser = currentUser;
         }
 
         // GET: api/Admin
@@ -113,7 +117,7 @@ namespace CourierBackend.Controllers
         }
 
         [HttpPut("{id}/update")]
-        public async Task<IActionResult> PutAdmin(AdminRequest request, int id)
+        public async Task<IActionResult> PutAdmin([FromBody] AdminRequest request, int id)
         {
             var result = await _validator.ValidateAsync(request);
 
@@ -127,6 +131,18 @@ namespace CourierBackend.Controllers
             AdminResource resource = AdminResource.FromModel(admin);
 
             return Ok(ResponseStructures.SuccessResponse(resource));
+        }
+
+        [HttpGet("profile")]
+        public IActionResult Profile()
+        {
+            return Ok(new
+            {
+                Id = _currentUser.GetId(),
+                Name = _currentUser.GetName(),
+                Email = _currentUser.GetEmail(),
+                Role = _currentUser.GetRole()
+            });
         }
     }
 }

@@ -27,5 +27,7 @@ namespace CourierBackend.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Package> Packages { get; set; } = new List<Package>();
+
+        public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
     }
 }

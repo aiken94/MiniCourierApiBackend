@@ -8,17 +8,20 @@ namespace CourierBackend.Data.Repositories
     using CourierBackend.Data.Requests;
     using CourierBackend.Helpers;
     using CourierBackend.Services;
-
+    using CourierBackend.Services.Auth.Interfaces;
     public class PackageRepository : IPackageRepository
     {
         private readonly CourierContext _context;
 
         private readonly IFileService _fileService;
 
-        public PackageRepository(CourierContext context, IFileService fileService)
+        private readonly ICurrentAdminService _currentUser;
+
+        public PackageRepository(CourierContext context, IFileService fileService, ICurrentAdminService currentUser)
         {
             _context = context;
             _fileService = fileService;
+            _currentUser = currentUser;
         }
 
         public IQueryable<Package> GetPackagesAsync()
@@ -58,7 +61,7 @@ namespace CourierBackend.Data.Repositories
                 // create package
                 var package = new Package
                 {
-                    AdminId = 1, // replace with authenticated admin id
+                    AdminId = _currentUser.GetId(), // replace with authenticated admin id
                     Value = request.PackageValue,
                     Weight = request.PackageWeight,
                     Cost = request.PackageCost,

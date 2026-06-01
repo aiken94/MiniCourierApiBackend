@@ -9,14 +9,18 @@ using CourierBackend.Services.Model.Interfaces;
 using CourierBackend.Services.Model;
 using System.Text.Json.Serialization;
 using CourierBackend.Middlewares;
+using CourierBackend.Services.Email;
+using CourierBackend.Services.Email.Interfaces;
+using CourierBackend.Configurations.Services;
+using CourierBackend.Services.Auth.Interfaces;
+using CourierBackend.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // database context
 builder.DBStoreConnection();
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(
             new JsonStringEnumConverter()
@@ -68,6 +72,18 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
     options.LowercaseQueryStrings = true;
 });
+
+// Email service
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Auth service
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+// current admin service
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentAdminService, CurrentAdminService>();
 
 // file service
 builder.Services.AddScoped<IFileService, FileService>();
