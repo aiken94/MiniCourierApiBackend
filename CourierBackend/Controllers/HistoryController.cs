@@ -18,10 +18,13 @@ namespace CourierBackend.Controllers
 
         private readonly IDeliveryHistoryService _deliveryHistoryService;
 
-        public HistoryController(IValidator<DeliveryHistoryRequest> validator, IDeliveryHistoryService deliveryHistoryService)
+        private readonly IPackageService _packageService;
+
+        public HistoryController(IValidator<DeliveryHistoryRequest> validator, IDeliveryHistoryService deliveryHistoryService, IPackageService packageService)
         {
             _validator = validator;
             _deliveryHistoryService = deliveryHistoryService;
+            _packageService = packageService;
         }
 
         [HttpGet("package/{id}")]
@@ -43,6 +46,11 @@ namespace CourierBackend.Controllers
                 return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
             }
 
+            if (await _packageService.GetByIdAsync(request.PackageId) == null)
+            {
+                return NotFound(ResponseStructures._404Response("Package not found"));
+            }
+
             PackageDeliveryHistory history = await _deliveryHistoryService.CreateAsync(request);
 
             DeliveryHistoryResource resource = DeliveryHistoryResource.FromModel(history);
@@ -61,7 +69,7 @@ namespace CourierBackend.Controllers
             }
             else
             {
-                return BadRequest();
+                return NotFound(ResponseStructures._404Response("History not found"));
             }
         }
     }

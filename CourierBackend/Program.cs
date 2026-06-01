@@ -7,12 +7,21 @@ using CourierBackend.Data.Repositories;
 using CourierBackend.Data.Repositories.Interfaces;
 using CourierBackend.Services.Model.Interfaces;
 using CourierBackend.Services.Model;
+using System.Text.Json.Serialization;
 using CourierBackend.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // database context
 builder.DBStoreConnection();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter()
+        );
+    });
 
 // validation service
 //builder.Services.AddValidation();
@@ -32,6 +41,9 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddScoped<IPackageRepository, PackageRepository>();
 builder.Services.AddScoped<IPackageService, PackageService>();
+
+builder.Services.AddScoped<IDeliveryHistoryRepository, DeliveryHistoryRepository>();
+builder.Services.AddScoped<IDeliveryHistoryService, DeliveryHistoryService>();
 
 // cache service
 builder.Services.AddMemoryCache();

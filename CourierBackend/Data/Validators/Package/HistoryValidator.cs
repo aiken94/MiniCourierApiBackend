@@ -7,6 +7,13 @@ namespace CourierBackend.Data.Validators
         : AbstractValidator<DeliveryHistoryRequest>
     {
 
+        string[] allowedLocations =
+        [
+            "Origin",
+            "Destination"
+        ];
+
+
         public DeliveryHistoryRequestValidator()
         {
             RuleFor(x => x.PackageId)
@@ -18,7 +25,9 @@ namespace CourierBackend.Data.Validators
 
             RuleFor(x => x.Location)
                 .NotEmpty()
-                .IsInEnum();
+                .MaximumLength(100)
+                .Must(location => allowedLocations.Contains(location))
+                .WithMessage("Invalid location value.");
 
             RuleFor(x => x.Date)
                 .NotEmpty();

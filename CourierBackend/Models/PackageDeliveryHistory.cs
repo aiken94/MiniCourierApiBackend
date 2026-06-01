@@ -22,7 +22,7 @@ namespace CourierBackend.Models
         public required string Remarks { get; set; }
 
         [Required]
-        public LocationType Location { get; set; }
+        public string? Location { get; set; }
 
         [Required]
         public DateOnly Date { get; set; }

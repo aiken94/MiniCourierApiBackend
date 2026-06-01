@@ -16,17 +16,17 @@ namespace CourierBackend.Data.Repositories
             _context = context;
         }
 
-        public async Task<PackageDeliveryHistory> GetHistoryByIdAsync(int id)
+        public async Task<PackageDeliveryHistory?> GetHistoryByIdAsync(int id)
         {
             return await _context.PackageDeliveryHistories.Where(history => history.Id == id)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<DeliveryHistoryResource>> GetHistoriesAsync(int packageId)
         {
             return await _context.PackageDeliveryHistories
                 .Where(x => x.PackageId == packageId)
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(x => x.Id)
                 .Select(x => new DeliveryHistoryResource
                 {
                     Id = x.Id,
@@ -37,7 +37,7 @@ namespace CourierBackend.Data.Repositories
                 .ToListAsync();
         }
 
-        public async Task<PackageDeliveryHistory> CreateAsync(PackageDeliveryHistory history)
+        public async Task<PackageDeliveryHistory?> CreateAsync(PackageDeliveryHistory history)
         {
             await _context.PackageDeliveryHistories.AddAsync(history);
 

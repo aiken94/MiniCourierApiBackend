@@ -6,7 +6,7 @@ namespace CourierBackend.Data.Resources
     {
         public int Id { get; set; }
         public string? Remarks { get; set; }
-        public LocationType? Location { get; set; }
+        public string? Location { get; set; }
         public DateOnly Date { get; set; }
 
         public static DeliveryHistoryResource FromModel(PackageDeliveryHistory history)

@@ -7,9 +7,9 @@ namespace CourierBackend.Data.Repositories.Interfaces
     {
         Task<List<DeliveryHistoryResource>> GetHistoriesAsync(int package_id);
 
-        Task<PackageDeliveryHistory> GetHistoryByIdAsync(int id);
+        Task<PackageDeliveryHistory?> GetHistoryByIdAsync(int id);
 
-        Task<PackageDeliveryHistory> CreateAsync(PackageDeliveryHistory history);
+        Task<PackageDeliveryHistory?> CreateAsync(PackageDeliveryHistory history);
 
         Task DeleteAsync(PackageDeliveryHistory history);
     }

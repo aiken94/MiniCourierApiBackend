@@ -1,5 +1,3 @@
-using CourierBackend.Models;
-
 namespace CourierBackend.Data.Requests
 {
     public class DeliveryHistoryRequest
@@ -8,7 +6,7 @@ namespace CourierBackend.Data.Requests
 
         public required string Remarks { get; set; }
 
-        public required LocationType Location { get; set; }
+        public required string? Location { get; set; }
 
         public required DateOnly Date { get; set; }
     }
