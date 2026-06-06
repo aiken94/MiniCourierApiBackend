@@ -63,4 +63,14 @@ public class CurrentAdminService : ICurrentAdminService
             ?.Identity
             ?.IsAuthenticated ?? false;
     }
+
+    public bool CanManageAdmin()
+    {
+        if (GetRole() == "Admin")
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

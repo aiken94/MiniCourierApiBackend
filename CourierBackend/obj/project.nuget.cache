@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "/zHjz5xA8kQ=",
+  "dgSpecHash": "6FoMl9+IlhA=",
   "success": true,
   "projectFilePath": "C:\\C# Projects\\Courier\\Backend\\CourierBackend\\CourierBackend.csproj",
   "expectedPackageFiles": [
@@ -10,7 +10,6 @@
     "C:\\Users\\navte\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\mailkit\\4.17.0\\mailkit.4.17.0.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.8\\microsoft.aspnetcore.authentication.jwtbearer.10.0.8.nupkg.sha512",
-    "C:\\Users\\navte\\.nuget\\packages\\microsoft.aspnetcore.identity\\2.3.10\\microsoft.aspnetcore.identity.2.3.10.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\microsoft.codeanalysis.common\\5.0.0\\microsoft.codeanalysis.common.5.0.0.nupkg.sha512",
@@ -57,18 +56,5 @@
     "C:\\Users\\navte\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.0.1\\system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512",
     "C:\\Users\\navte\\.nuget\\packages\\system.security.cryptography.pkcs\\10.0.0\\system.security.cryptography.pkcs.10.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1510",
-      "level": "Warning",
-      "message": "PackageReference Microsoft.AspNetCore.Identity will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\C# Projects\\Courier\\Backend\\CourierBackend\\CourierBackend.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\C# Projects\\Courier\\Backend\\CourierBackend\\CourierBackend.csproj",
-      "libraryId": "Microsoft.AspNetCore.Identity",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

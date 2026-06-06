@@ -10,6 +10,7 @@ namespace CourierBackend.Controllers
     using FluentValidation;
     using CourierBackend.Helpers;
     using CourierBackend.Services.Model.Interfaces;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -29,16 +30,16 @@ namespace CourierBackend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetPackages([FromQuery] QueryParameters parameters)
         {
             var results = await _packageService.GetPackagesAsync(parameters);
-
-            Console.WriteLine("packages");
 
             return Ok(results);
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult> GetPackage(int id)
         {
             var package = await _packageService.GetByIdAsync(id);
@@ -58,6 +59,7 @@ namespace CourierBackend.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
+        [Authorize]
         public async Task<IActionResult> CreatePackage([FromForm] PackageRequest request)
         {
             var result = await _validator.ValidateAsync(request);
@@ -76,6 +78,7 @@ namespace CourierBackend.Controllers
 
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
+        [Authorize]
         public async Task<IActionResult> PutPackage([FromForm] PackageRequest request, int id)
         {
             var result = await _validator.ValidateAsync(request);
@@ -102,6 +105,7 @@ namespace CourierBackend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePackage(int id)
         {
             var package = await _packageService.GetByIdAsync(id);

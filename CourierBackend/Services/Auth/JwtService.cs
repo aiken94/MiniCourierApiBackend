@@ -39,7 +39,7 @@ public class JwtService : IJwtService
             new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
             new(ClaimTypes.Name, admin.Name),
             new(ClaimTypes.Email, admin.Email),
-            new(ClaimTypes.Role, admin.Role.ToString())
+            new(ClaimTypes.Role, admin.Role == 1 ? "User" : "Admin")
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));

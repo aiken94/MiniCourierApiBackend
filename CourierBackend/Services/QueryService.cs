@@ -16,17 +16,12 @@ namespace CourierBackend.Services
             set => _perPage = value > MaxPageSize ? MaxPageSize : value;
         }
 
-        public string? Fields { get; set; }
-
         // Search
         public string? Search { get; set; }
 
         // Sorting
         public string? SortBy { get; set; }
         public string? SortDirection { get; set; } = "asc";
-
-        // Filtering (key-value pairs)
-        public Dictionary<string, Dictionary<string, string>>? Filters { get; set; }
     }
 
     public interface IQueryService
@@ -35,8 +30,7 @@ namespace CourierBackend.Services
             IQueryable<TEntity> query,
             QueryParameters parameters,
             Func<TEntity, TDto> map,
-            Func<IQueryable<TEntity>, string, IQueryable<TEntity>>? search = null,
-            Func<IQueryable<TEntity>, Dictionary<string, string>, IQueryable<TEntity>>? filter = null
+            Func<IQueryable<TEntity>, string, IQueryable<TEntity>>? search = null
         );
     }
 
@@ -53,8 +47,7 @@ namespace CourierBackend.Services
             IQueryable<TEntity> query,
             QueryParameters parameters,
             Func<TEntity, TDto> map,
-            Func<IQueryable<TEntity>, string, IQueryable<TEntity>>? search = null,
-            Func<IQueryable<TEntity>, Dictionary<string, string>, IQueryable<TEntity>>? filter = null
+            Func<IQueryable<TEntity>, string, IQueryable<TEntity>>? search = null
         )
         {
             // for previous page caching, we can generate a cache key based on the query parameters
@@ -69,12 +62,6 @@ namespace CourierBackend.Services
             if (!string.IsNullOrWhiteSpace(parameters.Search) && search != null)
             {
                 query = search(query, parameters.Search);
-            }
-
-            // FILTER
-            if (parameters.Filters != null)
-            {
-                query = FilterService.Apply(query, parameters.Filters);
             }
 
             // SORT
@@ -93,9 +80,6 @@ namespace CourierBackend.Services
 
             var data = items.Select(map).ToList();
 
-            // Apply field selection
-            //var fields = FieldSelectionService.Apply(data, parameters.Fields);
-
             var response = Pagination<TDto>.Create(
                 data,
                 total,
@@ -109,11 +93,7 @@ namespace CourierBackend.Services
             return response;
         }
 
-        private IQueryable<TEntity> ApplySorting<TEntity>(
-            IQueryable<TEntity> query,
-            string sortBy,
-            string? direction
-        )
+        private IQueryable<TEntity> ApplySorting<TEntity>(IQueryable<TEntity> query, string sortBy, string? direction)
         {
             var prop = typeof(TEntity).GetProperty(sortBy);
 
@@ -126,24 +106,10 @@ namespace CourierBackend.Services
 
         private string _GenerateCacheKey<TEntity>(QueryParameters parameters)
         {
-            var key = $"{typeof(TEntity).Name}_" +
+            return $"{typeof(TEntity).Name}_" +
                       $"{parameters.Page}_{parameters.PerPage}_" +
                       $"{parameters.Search}_" +
-                      $"{parameters.SortBy}_{parameters.SortDirection}_" +
-                      $"{parameters.Fields}";
-
-            if (parameters.Filters != null)
-            {
-                foreach (var f in parameters.Filters)
-                {
-                    foreach (var op in f.Value)
-                    {
-                        key += $"_{f.Key}-{op.Key}-{op.Value}";
-                    }
-                }
-            }
-
-            return key;
+                      $"{parameters.SortBy}_{parameters.SortDirection}_";
         }
     }
 }

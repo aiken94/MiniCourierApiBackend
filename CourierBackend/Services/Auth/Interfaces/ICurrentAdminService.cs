@@ -11,4 +11,6 @@ public interface ICurrentAdminService
     string? GetRole();
 
     bool IsAuthenticated();
+
+    bool CanManageAdmin();
 }

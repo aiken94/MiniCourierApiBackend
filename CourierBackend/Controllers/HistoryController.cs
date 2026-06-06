@@ -9,9 +9,11 @@ namespace CourierBackend.Controllers
     using FluentValidation;
     using CourierBackend.Helpers;
     using CourierBackend.Services.Model.Interfaces;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HistoryController : ControllerBase
     {
         private readonly IValidator<DeliveryHistoryRequest> _validator;

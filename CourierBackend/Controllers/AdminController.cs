@@ -12,9 +12,11 @@ namespace CourierBackend.Controllers
     using CourierBackend.Helpers;
     using CourierBackend.Services.Model.Interfaces;
     using CourierBackend.Services.Auth.Interfaces;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private readonly CourierContext _context;
@@ -37,30 +39,15 @@ namespace CourierBackend.Controllers
             _currentUser = currentUser;
         }
 
-        // GET: api/Admin
-        //[HttpGet]
-        //public async Task<ActionResult<Pagination<AdminResource>>> GetAdmins([FromQuery] PaginationRequest request)
-        //{
-        //    var query = _context.Admins.AsQueryable();
-
-        //    var result = await _paginationService.PaginateAsync(
-        //        query,
-        //        request,
-        //        AdminResource.FromModel
-        //    );
-
-        //    return Ok(result);
-        //}
-
         [HttpGet]
         public async Task<ActionResult> GetAdmins([FromQuery] QueryParameters parameters)
         {
+            if (!_currentUser.CanManageAdmin())
+            {
+                return Unauthorized(ResponseStructures._401Response("You are not authorized to do that!"));
+            }
+
             var query = _context.Admins.AsQueryable();
-
-            Dictionary<string, int> roles = new Dictionary<string, int>();
-
-            roles["admin"] = 0;
-            roles["user"] = 1;
 
             var result = await _queryService.QueryAsync(
                 query,
@@ -72,18 +59,7 @@ namespace CourierBackend.Controllers
                     a.Name.ToLower().Contains(search.ToLower()) ||
                     a.Email.ToLower().Contains(search.ToLower()) ||
                     a.PhoneNumber.ToLower().Contains(search.ToLower())
-                ),
-
-                // FILTER LOGIC
-                (q, filters) =>
-                {
-                    var role = roles[filters["role"]];
-
-                    if (filters.ContainsKey("role"))
-                        q = q.Where(a => a.Role == role);
-
-                    return q;
-                }
+                )
             );
 
             return Ok(result);
@@ -94,6 +70,11 @@ namespace CourierBackend.Controllers
         public async Task<ActionResult<AdminResource>> GetAdmin(int id)
         {
             var admin = await _adminService.GetByIdAsync(id);
+
+            if (!_currentUser.CanManageAdmin())
+            {
+                return Unauthorized(ResponseStructures._401Response("You are not authorized to do that!"));
+            }
 
             return AdminResource.FromModel(admin);
         }
@@ -107,6 +88,11 @@ namespace CourierBackend.Controllers
             if (!result.IsValid)
             {
                 return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
+            if (!_currentUser.CanManageAdmin())
+            {
+                return Unauthorized(ResponseStructures._401Response("You are not authorized to do that!"));
             }
 
             Admin admin = await _adminService.RegisterAsync(request);
@@ -141,7 +127,8 @@ namespace CourierBackend.Controllers
                 Id = _currentUser.GetId(),
                 Name = _currentUser.GetName(),
                 Email = _currentUser.GetEmail(),
-                Role = _currentUser.GetRole()
+                Role = _currentUser.GetRole(),
+                CanManageAdmin = _currentUser.CanManageAdmin(),
             });
         }
     }

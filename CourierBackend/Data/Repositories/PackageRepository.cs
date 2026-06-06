@@ -26,7 +26,11 @@ namespace CourierBackend.Data.Repositories
 
         public IQueryable<Package> GetPackagesAsync()
         {
-            return _context.Packages.AsQueryable();
+            return _context.Packages
+                .Include(x => x.Admin)
+                .Include(x => x.Sender)
+                .Include(x => x.Receiver)
+                .AsQueryable();
         }
 
         public async Task<Package?> GetByIdAsync(int id)
