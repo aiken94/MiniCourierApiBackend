@@ -39,11 +39,11 @@ public class EmailService : IEmailService
 
         using var client = new SmtpClient();
 
-        await client.ConnectAsync(_settings.Host, _settings.Port, SecureSocketOptions.StartTls, cancellationToken);
+        await client.ConnectAsync(_settings.Host, _settings.Port, SecureSocketOptions.SslOnConnect, cancellationToken);
 
         await client.AuthenticateAsync(
             _settings.Username,
-            _settings.Password,
+           _settings.Password,
             cancellationToken
         );
 

@@ -9,6 +9,7 @@ namespace CourierBackend.Controllers
     using CourierBackend.Services.Auth.Interfaces;
     using CourierBackend.Helpers;
     using Microsoft.EntityFrameworkCore;
+    using FluentValidation;
 
     [ApiController]
     [Route("api/[controller]")]
@@ -16,11 +17,14 @@ namespace CourierBackend.Controllers
     {
         private readonly IJwtService _jwtService;
         private readonly CourierContext _context;
-
-        public AuthController(CourierContext context, IJwtService jwtService)
+        private readonly IValidator<ForgotPasswordRequest> _forgotPasswordValidator;
+        private readonly IValidator<ResetPasswordRequest> _resetPasswordValidator;
+        public AuthController(CourierContext context, IJwtService jwtService, IValidator<ForgotPasswordRequest> forgotPasswordValidator, IValidator<ResetPasswordRequest> resetPasswordValidator)
         {
             _context = context;
             _jwtService = jwtService;
+            _forgotPasswordValidator = forgotPasswordValidator;
+            _resetPasswordValidator = resetPasswordValidator;
         }
 
         [HttpPost("login")]
@@ -69,6 +73,13 @@ namespace CourierBackend.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
+            var result = await _forgotPasswordValidator.ValidateAsync(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
             await _jwtService.ForgotPasswordAsync(request.Email);
 
             return Ok(ResponseStructures.EmptyOkResponse("If the email exists, a reset link has been sent."));
@@ -77,9 +88,23 @@ namespace CourierBackend.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            await _jwtService.ResetPasswordAsync(request.Token, request.NewPassword);
+            var result = await _resetPasswordValidator.ValidateAsync(request);
 
-            return Ok(ResponseStructures.EmptyOkResponse("Password reset successful."));
+            if (!result.IsValid)
+            {
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
+            try
+            {
+                await _jwtService.ResetPasswordAsync(request.Token, request.NewPassword);
+
+                return Ok(ResponseStructures.EmptyOkResponse("Password reset successful."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseStructures._400Response(ex.Message));
+            }
         }
     }
 }

@@ -41,6 +41,15 @@ namespace CourierBackend.Helpers
             };
         }
 
+        public static object _400Response(string message)
+        {
+            return new
+            {
+                message = message,
+                status = "error"
+            };
+        }
+
         public static object _401Response(string message)
         {
             return new

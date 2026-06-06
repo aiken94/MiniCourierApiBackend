@@ -1,3 +1,5 @@
+/.idea
 /wwwroot
 *.db
 appsettings.json
+appsettings.Development.json

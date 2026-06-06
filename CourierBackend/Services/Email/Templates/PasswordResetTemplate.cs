@@ -2,7 +2,7 @@ namespace CourierBackend.Services.Email.Templates;
 
 public static class PasswordResetTemplate
 {
-    public static string Build(string name, string resetUrl)
+    public static string Build(string name, string token, string resetUrl)
     {
         return $"""
             <html>
@@ -12,6 +12,10 @@ public static class PasswordResetTemplate
                 <p>Hello {name},</p>
 
                 <p>We received a request to reset your password.</p>
+
+                <p>
+                    Use the token below to reset your password: {token}
+                </p>
 
                 <p>
                     <a href="{resetUrl}">

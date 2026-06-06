@@ -138,7 +138,7 @@ public class JwtService : IJwtService
 
         var resetLink = $"https://admin.courierbackend.com/reset-password?token={Uri.EscapeDataString(rawToken)}";
 
-        var html = PasswordResetTemplate.Build(admin.Name, resetLink);
+        var html = PasswordResetTemplate.Build(admin.Name, rawToken, resetLink);
 
         await _emailService.SendAsync(
             admin.Email,

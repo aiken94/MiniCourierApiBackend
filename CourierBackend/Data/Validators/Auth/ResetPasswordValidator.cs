@@ -18,7 +18,7 @@ namespace CourierBackend.Data.Validators
 
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty().WithMessage("Confirm password is required.")
-                .Equal(x => x.NewPassword).WithMessage("Passwords do not match.");
+                .Equal(x => x.NewPassword).WithMessage("Confirm password must match new password.");
         }
     }
 }
