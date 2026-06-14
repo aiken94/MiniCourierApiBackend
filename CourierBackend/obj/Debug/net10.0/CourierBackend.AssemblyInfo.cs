@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CourierBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95ed83dfbd64688b7ef00b364a1cbf900a96b1b7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09fa11bfe87c212f34f94a508dad6183dbc5ec99")]
 [assembly: System.Reflection.AssemblyProductAttribute("CourierBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CourierBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -17,6 +17,7 @@ using CourierBackend.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 string? apiVersion = builder.Configuration["UserSettings:APIVersion"];
@@ -31,6 +32,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
         );
     });
 
+// mem cache service
+builder.Services.AddMemoryCache();
+
+// rate limit service
+builder.Services.Configure<IpRateLimitOptions>(
+    builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(
+    builder.Configuration.GetSection("IpRateLimitPolicies"));
+
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
 // validation service
 builder.Services.AddValidatorsFromAssemblyContaining<CreateValidator>();
 
@@ -40,17 +55,17 @@ builder.Services.AddScoped<IQueryService, QueryService>();
 // pagination service
 builder.Services.AddScoped<IPaginationService, PaginationService>();
 
+// admin service
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 
+// package service
 builder.Services.AddScoped<IPackageRepository, PackageRepository>();
 builder.Services.AddScoped<IPackageService, PackageService>();
 
+// delivery history service
 builder.Services.AddScoped<IDeliveryHistoryRepository, DeliveryHistoryRepository>();
 builder.Services.AddScoped<IDeliveryHistoryService, DeliveryHistoryService>();
-
-// cache service
-builder.Services.AddMemoryCache();
 
 // controllers already registered above via mvcBuilder
 builder.Services.AddEndpointsApiExplorer();
@@ -161,6 +176,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         options.ConfigObject.PersistAuthorization = true;
     });
 }
+
+app.UseIpRateLimiting();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -2,6 +2,7 @@ namespace CourierBackend.Data
 {
     using Microsoft.EntityFrameworkCore;
     using CourierBackend.Models;
+    using CourierBackend.Configurations.Models;
 
     public class CourierContext : DbContext
     {

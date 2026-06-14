@@ -1,4 +1,4 @@
-namespace CourierBackend.Data.Configurations
+namespace CourierBackend.Configurations.Models
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
