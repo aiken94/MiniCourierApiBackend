@@ -22,6 +22,8 @@ namespace CourierBackend.Data.Resources
 
         public required string Description { get; set; }
 
+        public required DateOnly DeliveryDate { get; set; }
+
         public required string ImageUrl { get; set; }
 
         public int Tracks { get; set; }
@@ -47,6 +49,7 @@ namespace CourierBackend.Data.Resources
                 Value = package.Value,
                 Cost = package.Cost,
                 Description = package.Description,
+                DeliveryDate = package.DeliveryDate,
                 ImageUrl = package.ImageUrl,
                 Tracks = package.NoOfTracking,
                 CreatedAt = package.CreatedAt,
