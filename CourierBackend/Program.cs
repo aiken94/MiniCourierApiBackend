@@ -8,7 +8,6 @@ using CourierBackend.Data.Repositories.Interfaces;
 using CourierBackend.Services.Model.Interfaces;
 using CourierBackend.Services.Model;
 using System.Text.Json.Serialization;
-using CourierBackend.Middlewares;
 using CourierBackend.Services.Email;
 using CourierBackend.Services.Email.Interfaces;
 using CourierBackend.Configurations.Services;
@@ -31,6 +30,21 @@ builder.Services.AddControllers().AddJsonOptions(options =>
             new JsonStringEnumConverter()
         );
     });
+    
+// add cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy
+            .WithOrigins([
+                "http://localhost:5173",
+                "http://localhost:3000"
+            ])
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // mem cache service
 builder.Services.AddMemoryCache();
@@ -72,10 +86,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 // change the routing to be lowercase for better SEO and consistency
 builder.Services.AddRouting(options =>
-{
-    options.LowercaseUrls = true;
-    options.LowercaseQueryStrings = true;
-});
+    {
+        options.LowercaseUrls = true;
+        options.LowercaseQueryStrings = true;
+    });
 
 // Email service
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -140,30 +154,26 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 // swagger options
 builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc(apiVersion, new OpenApiInfo
     {
-        Title = builder.Configuration["UserSettings:AppName"],
-        Description = builder.Configuration["UserSettings:AppDescription"],
-        Version = apiVersion
-    });
+        options.SwaggerDoc(apiVersion, new OpenApiInfo
+        {
+            Title = builder.Configuration["UserSettings:AppName"],
+            Description = builder.Configuration["UserSettings:AppDescription"],
+            Version = apiVersion
+        });
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter JWT token like: Bearer {your_token}"
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Enter JWT token like: Bearer {your_token}"
+        });
     });
-});
 
 var app = builder.Build();
-
-//app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
@@ -177,10 +187,17 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     });
 }
 
-app.UseIpRateLimiting();
+app.UseStaticFiles();
+
+// enable cors
+app.UseCors("CorsPolicy");
+
+//app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseIpRateLimiting();
 
 app.MapControllers();
 

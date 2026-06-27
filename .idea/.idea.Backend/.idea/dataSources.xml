@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Courier.db" uuid="ccd13389-0dd2-44a8-9f69-14af70aba9f9">
+    <data-source source="LOCAL" name="Courier.db" uuid="598a59ff-24d5-431c-abef-097856c1355d">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\C# Projects\Courier\Backend\CourierBackend\Courier.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\CSharpProjects\Courier\Backend\CourierBackend\Courier.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
