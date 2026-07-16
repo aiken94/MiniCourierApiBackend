@@ -1,7 +1,7 @@
 using CourierBackend.Data;
 using CourierBackend.Helpers;
 using Microsoft.OpenApi;
-using CourierBackend.Data.Validators.Admin;
+using CourierBackend.Data.Validators.Package.Admin;
 using CourierBackend.Services;
 using CourierBackend.Data.Repositories;
 using CourierBackend.Data.Repositories.Interfaces;
@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AspNetCoreRateLimit;
+using CourierBackend.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 string? apiVersion = builder.Configuration["UserSettings:APIVersion"];
@@ -30,7 +31,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
             new JsonStringEnumConverter()
         );
     });
-    
+
 // add cors
 builder.Services.AddCors(options =>
 {
@@ -81,6 +82,9 @@ builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IDeliveryHistoryRepository, DeliveryHistoryRepository>();
 builder.Services.AddScoped<IDeliveryHistoryService, DeliveryHistoryService>();
 
+// dashboard service
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
 // controllers already registered above via mvcBuilder
 builder.Services.AddEndpointsApiExplorer();
 
@@ -121,7 +125,7 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
         };
-        
+
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -179,9 +183,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseSwagger();
 
-    app.UseSwaggerUI(options => {
+    app.UseSwaggerUI(options =>
+    {
         options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", builder.Configuration["UserSettings:AppDescription"]);
-        
+
         // Keeps JWT token after page refresh
         options.ConfigObject.PersistAuthorization = true;
     });
@@ -192,7 +197,7 @@ app.UseStaticFiles();
 // enable cors
 app.UseCors("CorsPolicy");
 
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

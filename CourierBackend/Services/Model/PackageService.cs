@@ -62,4 +62,17 @@ public class PackageService : IPackageService
     {
         return await _packageRepository.GetByTrackingNumberAsync(trackingNumber);
     }
+
+    public async Task<bool> UpdateStatusAsync(UpdatePackageStatusRequest request, int packageId)
+    {
+        // find the package first
+        var package = await GetByIdAsync(packageId);
+
+        if (package == null)
+        {
+            return false;
+        }
+        
+        return await _packageRepository.UpdateStatusAsync(request, package);
+    }
 }

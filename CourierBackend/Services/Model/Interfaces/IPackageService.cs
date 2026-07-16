@@ -17,4 +17,6 @@ public interface IPackageService
     Task DeleteAsync(Package package);
 
     Task<Package?> GetByTrackingNumberAsync(string trackingNumber);
+
+    Task<bool> UpdateStatusAsync(UpdatePackageStatusRequest request, int packageId);
 }

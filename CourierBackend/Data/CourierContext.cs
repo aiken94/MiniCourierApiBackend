@@ -53,6 +53,10 @@ namespace CourierBackend.Data
                 .WithOne(r => r.Package)
                 .HasForeignKey<Receiver>(r => r.PackageId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Package>()
+                .Property(p => p.Status)
+                .HasConversion<string>();
 
             modelBuilder.Entity<PackageDeliveryHistory>()
                 .HasOne(p => p.Package)

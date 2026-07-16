@@ -1,3 +1,5 @@
+using CourierBackend.Data.Enums;
+
 namespace CourierBackend.Data.Resources
 {
     using CourierBackend.Models;
@@ -22,9 +24,13 @@ namespace CourierBackend.Data.Resources
 
         public required string Description { get; set; }
 
+        public required DateOnly DeliveryDate { get; set; }
+
         public required string ImageUrl { get; set; }
 
         public int Tracks { get; set; }
+
+        public PackageStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
@@ -43,8 +49,10 @@ namespace CourierBackend.Data.Resources
                 Value = package.Value,
                 Cost = package.Cost,
                 Description = package.Description,
+                DeliveryDate = package.DeliveryDate,
                 ImageUrl = package.ImageUrl,
                 Tracks = package.NoOfTracking,
+                Status = package.Status,
                 CreatedAt = package.CreatedAt,
                 UpdatedAt = package.UpdatedAt
             };

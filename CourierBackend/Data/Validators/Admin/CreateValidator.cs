@@ -1,4 +1,4 @@
-namespace CourierBackend.Data.Validators.Admin
+namespace CourierBackend.Data.Validators.Package.Admin
 {
     using FluentValidation;
     using CourierBackend.Data.Requests;

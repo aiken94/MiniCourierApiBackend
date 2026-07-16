@@ -229,5 +229,29 @@ namespace CourierBackend.Data.Repositories
 
             return package;
         }
+
+        public async Task<bool> UpdateStatusAsync(UpdatePackageStatusRequest request, Package package)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                // 1. Update package fields
+                package.Status = request.PackageStatus;
+
+                // 2. Save changes
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                
+                return false;
+            }
+        }
     }
 }

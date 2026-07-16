@@ -1,7 +1,7 @@
 using CourierBackend.Data.Requests;
 using FluentValidation;
 
-namespace CourierBackend.Data.Validators
+namespace CourierBackend.Data.Validators.Package
 {
     public class DeliveryHistoryRequestValidator
         : AbstractValidator<DeliveryHistoryRequest>

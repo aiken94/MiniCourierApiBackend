@@ -1,6 +1,7 @@
+using CourierBackend.Data.Validators.Package;
+
 namespace CourierBackend.Controllers
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using CourierBackend.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -21,12 +22,20 @@ namespace CourierBackend.Controllers
         private readonly IValidator<TrackPackageRequest> _trackValidator;
 
         private readonly IPackageService _packageService;
+        
+        private  readonly IValidator<UpdatePackageStatusRequest> _statusValidator;
 
-        public PackageController(IValidator<PackageRequest> packageValidator, IValidator<TrackPackageRequest> trackValidator, IPackageService packageService)
+        public PackageController(
+            IValidator<PackageRequest> packageValidator,
+            IValidator<TrackPackageRequest> trackValidator,
+            IPackageService packageService,
+            IValidator<UpdatePackageStatusRequest> statusValidator
+        )
         {
             _validator = packageValidator;
             _trackValidator = trackValidator;
             _packageService = packageService;
+            _statusValidator = statusValidator;
         }
 
         [HttpGet]
@@ -144,6 +153,29 @@ namespace CourierBackend.Controllers
             TrackingResource resource = TrackingResource.FromModel(package);
 
             return Ok(ResponseStructures.SuccessResponse(resource));
+        }
+        
+        [HttpPost("{id}/update-status")]
+        [Authorize]
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdatePackageStatusRequest request, int id)
+        {
+            var result = await _statusValidator.ValidateAsync(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(ResponseStructures.ErrorResponse(result.Errors.ToDictionary()));
+            }
+
+            var status = await _packageService.UpdateStatusAsync(request, id);
+
+            if (!status)
+            {
+                return NotFound(
+                    ResponseStructures._404Response("Package not found")
+                );
+            }
+
+            return NoContent();
         }
     }
 }

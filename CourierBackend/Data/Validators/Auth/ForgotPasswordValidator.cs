@@ -1,4 +1,4 @@
-namespace CourierBackend.Data.Validators
+namespace CourierBackend.Data.Validators.Package
 {
     using CourierBackend.Data.Requests.Auth;
     using FluentValidation;

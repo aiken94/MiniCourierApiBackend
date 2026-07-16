@@ -1,12 +1,12 @@
 using CourierBackend.Data.Requests;
 using FluentValidation;
 
-namespace CourierBackend.Data.Validators
+namespace CourierBackend.Data.Validators.Package
 {
     public class CreatePackageRequestValidator
         : AbstractValidator<PackageRequest>
     {
-        private readonly string[] AllowedExtensions =
+        private readonly string[] _allowedExtensions =
         {
             ".jpg",
             ".jpeg",
@@ -93,7 +93,7 @@ namespace CourierBackend.Data.Validators
                 .GetExtension(file.FileName)
                 .ToLower();
 
-            return AllowedExtensions.Contains(extension);
+            return _allowedExtensions.Contains(extension);
         }
 
         private bool BeValidSize(IFormFile? file)

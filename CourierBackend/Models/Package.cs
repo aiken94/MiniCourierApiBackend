@@ -1,3 +1,5 @@
+using CourierBackend.Data.Enums;
+
 namespace CourierBackend.Models
 {
     using System.ComponentModel.DataAnnotations.Schema;
@@ -23,6 +25,8 @@ namespace CourierBackend.Models
         public DateOnly DeliveryDate { get; set; }
 
         public int NoOfTracking { get; set; } = 0;
+        
+        public PackageStatus Status { get; set; } = PackageStatus.Pending;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

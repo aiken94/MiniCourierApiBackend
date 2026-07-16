@@ -4,6 +4,7 @@ using CourierBackend.Exceptions;
 using CourierBackend.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using CourierBackend.Services.Model.Interfaces;
+using CourierBackend.Services.Auth.Interfaces;
 
 namespace CourierBackend.Services.Model;
 
@@ -11,9 +12,12 @@ public class AdminService : IAdminService
 {
     private readonly IAdminRepository _adminRepository;
 
-    public AdminService(IAdminRepository adminRepository)
+    private readonly ICurrentAdminService _currentUser;
+
+    public AdminService(IAdminRepository adminRepository, ICurrentAdminService currentUser)
     {
         _adminRepository = adminRepository;
+        _currentUser = currentUser;
     }
 
     public async Task<Admin> GetByIdAsync(int id)
@@ -84,7 +88,12 @@ public class AdminService : IAdminService
         }
 
         // set the new records
-        admin.Role = request.Role;
+        // we will not change the role if the update is for an ordinary admin
+        if (_currentUser.GetRole()?.ToLower() == "admin")
+        {
+            admin.Role = request.Role;
+        }
+
         admin.Name = request.Name;
         admin.Email = request.Email;
         admin.PhoneNumber = request.PhoneNumber;
